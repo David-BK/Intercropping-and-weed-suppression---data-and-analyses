@@ -142,17 +142,17 @@ predictWeeds <- function(dataWeeds){
   pivot_longer(cols = c(Arithmetic, Harmonic), names_to = "Model", values_to = "Predicted")
   dataWeedsICPredLong <- mutate(dataWeedsICPredLong, Treatment = factor(Treatment))
   plotWeedPred <- ggplot(data = dataWeedsICPredLong, aes(x = Predicted, y = W, group_by = Model, color = Model)) +
-    geom_point(size = 6, shape = 1, stroke = 2) + 
+    geom_point(size = 1, shape = 1, stroke = 1) + 
     geom_abline(intercept = 0, slope = 1,
-                size = 2, 
+                size = 1, 
                 linetype = "dashed") +
     geom_function(fun = function(x)return(summary(lmArithmetic)$coefficients[1,1] + summary(lmArithmetic)$coefficients[2,1] * x),
                   col = "#F8766D",
-                  size = 2) +
+                  size = 1) +
     geom_function(fun = function(x)return(summary(lmHarmonic)$coefficients[1,1] + summary(lmHarmonic)$coefficients[2,1] * x),
                   col = "#00BFC4",
-                  size = 2) +
-    theme_bw(base_size = 30) +
+                  size = 1) +
+    theme_classic(base_size = 20) +
     labs(y = bquote("Observed weed biomass (g "~m^-2~")"),
          x = bquote("Predicted weed biomass (g "~m^-2~")"),
          title = "Predicted and observed weed biomass") +

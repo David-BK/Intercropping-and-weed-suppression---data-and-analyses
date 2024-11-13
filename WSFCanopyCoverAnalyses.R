@@ -76,7 +76,7 @@ tempData2022 <- tempData2022 %>%
   mutate(CumulTemp = cumulativeTemp2022)
 
 # Read data
-data2022 <- read_xlsx("FE1_data.xlsx", sheet = "CanopyCover", range = "A1:F533", col_names = TRUE) %>% 
+data2022 <- read_xlsx("WSF_2022_data.xlsx", sheet = "CanopyCover", range = "A1:F533", col_names = TRUE) %>% 
   rename("CanopyCover" = "PCover") %>% 
   mutate(DAS = as.integer(as.Date(Date) - sowingDate2022)) %>% 
   mutate(Time = tempData2022$CumulTemp[match(DAS, tempData2022$Time)]) %>% 
@@ -443,14 +443,14 @@ dataTreatment2022 <- lapply(dataTreatment2022, function(Data){
 
 # Plot triple combination graphs
 geomPoints <- lapply(dataTreatment2022, function(d){
-  return(geom_point(data = d, aes(x = Time, y = Average, col = as.factor(Treatment[1])), size = 2, shape = 1))
+  return(geom_point(data = d, aes(x = Time, y = Average, col = as.factor(Treatment[1])), size = 1, shape = 1))
 })
 
 geomFunctions <- lapply(1:length(fitsTLogisticNormal2022), function(i){
   o <- fitsTLogisticNormal2022[[i]]
   return(geom_function(fun = function(x)o$par["d"] * (exp(o$par["r"]*(x - o$par["h"])))/(1 + exp(o$par["r"]*(x - o$par["h"]))),
                        aes(col = as.factor(dataTreatment2022[[i]]$Treatment[1])),
-                       size = 1.5))
+                       size = 1))
 })
 
 ### Get all triple combinations
@@ -583,64 +583,79 @@ print(triplePlots)
 print(combinedPlot)
 dev.off()
 
-# Print all plots to jpeg
+# Print all plots to tiff
 dir.create("figures/canopy_cover")
 
 # Combined plot
 
-jpeg("figures/canopy_cover/plotCanopyCover2022TripleCombined.jpg", units = "px", width = 900, height = 1600, quality = 600)
+tiff("figures/canopy_cover/plotCanopyCover2022TripleCombined.tiff", units = "mm", width = 129, height = 229, res = 400)
 triplePlots[[1]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Barley_Pea")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
+        axis.ticks.x=element_blank(),
+        legend.position = "none") + 
   geom_segment(aes(x = 525, y = 0.7, xend = 360, yend = 0.70),
-               arrow = arrow(length = unit(0.5, "cm"))) +
+               arrow = arrow(length = unit(0.3, "cm"))) +
   geom_segment(aes(x = 525, y = 0.55, xend = 370, yend = 0.55),
-               arrow = arrow(length = unit(0.5, "cm"))) +
+               arrow = arrow(length = unit(0.3, "cm"))) +
   geom_segment(aes(x = 525, y = 0.4, xend = 380, yend = 0.40),
-               arrow = arrow(length = unit(0.5, "cm"))) +
-  annotate("text", x = 525, y = c(0.7, 0.55, 0.4), label = c("Cereal", "Intercrop", "Legume"), size = 10, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")]) +
+               arrow = arrow(length = unit(0.3, "cm"))) +
+  annotate("text", x = 525, y = c(0.7, 0.55, 0.4), label = c("Cereal", "Intercrop", "Legume"), size = 4, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")]) +
 triplePlots[[2]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Barley_Faba")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.title.y=element_blank(),
         axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) + 
+        axis.ticks.y=element_blank(),
+        legend.position = "none") + 
 triplePlots[[3]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Rye_Pea")) + 
-  ylim(c(0, 1.0)) + 
+  ylim(c(0, 1.0)) +  
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
+        axis.ticks.x=element_blank(),
+        legend.position = "none") +
 triplePlots[[4]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Rye_Faba")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.title.y=element_blank(),
         axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) + 
+        axis.ticks.y=element_blank(),
+        legend.position = "none") + 
 triplePlots[[5]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Triticale_Pea")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
+        axis.ticks.x=element_blank(),
+        legend.position = "none") + 
 triplePlots[[6]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Triticale_Faba")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
         axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
+        axis.ticks.x=element_blank(),
+        legend.position = "none") + 
 triplePlots[[7]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Wheat_Pea")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
+  theme(legend.position = "none") +
 triplePlots[[8]] + theme(plot.subtitle = element_text(hjust = -0.4)) +
   scale_color_manual(values = modelColors,
                      labels = c("Cereal_Legume", "Cereal", "Legume")) + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Wheat_Faba")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
@@ -1145,37 +1160,44 @@ print(doublePlotsNW)
 dev.off()
 
 # Combined plots
-jpeg("figures/canopy_cover/plotCanopyCover2023ATripleCombined.jpg", units = "px", width = 900, height = 1000, quality = 600)
+tiff("figures/canopy_cover/plotCanopyCover2023ATripleCombined.tiff", units = "mm", width = 174, height = 193, res = 400)
 triplePlotsNW[[1]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"1T:1F")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 12) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) +
+        axis.ticks.x=element_blank(),
+        legend.position = "none") +
   geom_segment(aes(x = 650, y = 0.45, xend = 425, yend = 0.55),
                arrow = arrow(length = unit(0.5, "cm"))) +
   geom_segment(aes(x = 600, y = 0.30, xend = 450, yend = 0.39),
                arrow = arrow(length = unit(0.5, "cm"))) +
   geom_segment(aes(x = 550, y = 0.15, xend = 500, yend = 0.20),
                arrow = arrow(length = unit(0.5, "cm"))) +
-  annotate("text", x = c(650, 600, 550), y = c(0.45, 0.30, 0.15), label = c("Cereal", "Intercrop", "Legume"), size = 8, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")]) + 
+  annotate("text", x = c(650, 600, 550), y = c(0.45, 0.30, 0.15), label = c("Cereal", "Intercrop", "Legume"), size = 4, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")]) + 
 triplePlotsNW[[2]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"TF-M")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 12) +
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
         axis.title.x=element_blank(),
         axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()) + 
+        axis.ticks.x=element_blank(),
+        legend.position = "none") + 
 triplePlotsNW[[3]] + theme(legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + labs(y = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"1T:3F")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 12) +
+  theme(legend.position = "none") +
 triplePlotsNW[[4]] + labs(y = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"3T:1F")) + 
   scale_color_manual(values = modelColors,
   labels = c("Cereal_Legume", "Cereal", "Legume")) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 12) +
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
-        legend.position = "none", plot.subtitle = element_text(hjust = -0.4)) + 
+        legend.position = "none", plot.subtitle = element_text(hjust = -0.0)) + 
 plot_layout(ncol = 2, nrow = 2, axis_titles = "collect") +
 plot_annotation(tag_levels = "a")
 dev.off()
@@ -1741,22 +1763,24 @@ combined1252023BNW
 combined3752023BNW
 dev.off()
 
-jpeg("figures/canopy_cover/plotCanopyCover2023BCombinedNW.jpg", units = "px", width = 1250, height = 2000, quality = 600)
+tiff("figures/canopy_cover/plotCanopyCover2023BCombinedNW.tiff", units = "mm", width = 129, height = 229, res = 400)
 combinedFaba2023BNW + labs(y = "", subtitle = bquote({P[cc]})) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         legend.position = "none", plot.subtitle = element_text(hjust = -0.05)) +
-  geom_segment(aes(x = 650, y = 0.75, xend = 730, yend = 0.58),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 660, y = 0.75, xend = 730, yend = 0.58),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 650, y = 0.2, xend = 620, yend = 0.31),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 640, y = 0.2, xend = 620, yend = 0.31),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  annotate("text", x = c(625, 650), y = c(0.75, 0.20), label = c("F", "F-375"), size = 10, hjust = 0.0, col = modelColors[c("F", "TM")]) + 
+  annotate("text", x = c(625, 650), y = c(0.75, 0.20), label = c("F", "F-375"), size = 5, hjust = 0.0, col = modelColors[c("F", "TM")]) + 
 combinedTriticale2023BNW + labs(y = "", subtitle = "", x = "") + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
@@ -1764,67 +1788,70 @@ combinedTriticale2023BNW + labs(y = "", subtitle = "", x = "") +
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
         legend.position = "none") + 
-  geom_segment(aes(x = 450, y = 0.9, xend = 540, yend = 0.78),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 460, y = 0.9, xend = 540, yend = 0.78),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 650, y = 0.5, xend = 600, yend = 0.6),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 640, y = 0.5, xend = 600, yend = 0.6),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  annotate("text", x = c(425, 650), y = c(0.9, 0.5), label = c("T", "T-375"), size = 10, hjust = 0.0, col = modelColors[c("T", "TA")]) + 
+  annotate("text", x = c(425, 650), y = c(0.9, 0.5), label = c("T", "T-375"), size = 5, hjust = 0.0, col = modelColors[c("T", "TA")]) + 
 combinedIC2023BNW + labs(y = "", subtitle = bquote({P[cc]})) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         legend.position = "none", plot.subtitle = element_text(hjust = -0.05)) + 
-  geom_segment(aes(x = 500, y = 0.85, xend = 625, yend = 0.75),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 510, y = 0.85, xend = 625, yend = 0.75),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 500, y = 0.75, xend = 600, yend = 0.65),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 510, y = 0.75, xend = 600, yend = 0.65),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 600, y = 0.30, xend = 550, yend = 0.40),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 590, y = 0.30, xend = 550, yend = 0.40),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 550, y = 0.15, xend = 475, yend = 0.30),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 540, y = 0.15, xend = 475, yend = 0.30),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  annotate("text", x = c(400, 400, 600, 550), y = c(0.85, 0.75, 0.30, 0.15), label = c("TF-M", "1T:1F", "TF-M-375", "1T:1F-375"), size = 10, hjust = 0.0, col = modelColors[c("FM", "Intercrop", "Weed", "FA")]) + 
+  annotate("text", x = c(350, 350, 600, 550), y = c(0.85, 0.75, 0.30, 0.15), label = c("TF-M", "1T:1F", "TF-M-375", "1T:1F-375"), size = 5, hjust = 0.0, col = modelColors[c("FM", "Intercrop", "Weed", "FA")]) + 
 combined1252023BNW + labs(y = "", subtitle = "") + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) +
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
         legend.position = "none") + 
-  geom_segment(aes(x = 475, y = 0.95, xend = 580, yend = 0.85),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 485, y = 0.95, xend = 580, yend = 0.85),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 400, y = 0.75, xend = 575, yend = 0.65),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 420, y = 0.75, xend = 575, yend = 0.65),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 675, y = 0.30, xend = 525, yend = 0.50),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 665, y = 0.30, xend = 525, yend = 0.50),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 600, y = 0.15, xend = 550, yend = 0.24),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 590, y = 0.15, xend = 550, yend = 0.24),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  annotate("text", x = c(450, 320, 675, 600), y = c(0.95, 0.75, 0.30, 0.15), label = c("T", "TF-M", "1T:1F", "F"), size = 10, hjust = 0.0, col = modelColors[c("T", "FM", "Intercrop", "F")]) + 
+  annotate("text", x = c(450, 275, 675, 600), y = c(0.95, 0.75, 0.30, 0.15), label = c("T", "TF-M", "1T:1F", "F"), size = 5, hjust = 0.0, col = modelColors[c("T", "FM", "Intercrop", "F")]) + 
 combined3752023BNW + labs(y = "", subtitle = bquote({P[cc]})) + ylim(c(0, 1.0)) +
+  theme_classic(base_size = 10) +
   theme(legend.position = "none",
         plot.subtitle = element_text(hjust = -0.05)) +
-  geom_segment(aes(x = 500, y = 0.85, xend = 650, yend = 0.70),
-             arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 520, y = 0.85, xend = 650, yend = 0.70),
+             arrow = arrow(length = unit(0.2, "cm")),
              size = 1.0) +
-  geom_segment(aes(x = 500, y = 0.70, xend = 623, yend = 0.56),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 520, y = 0.70, xend = 623, yend = 0.56),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 675, y = 0.30, xend = 590, yend = 0.47),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 665, y = 0.30, xend = 590, yend = 0.47),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  geom_segment(aes(x = 550, y = 0.10, xend = 525, yend = 0.18),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 540, y = 0.10, xend = 525, yend = 0.18),
+               arrow = arrow(length = unit(0.2, "cm")),
                size = 1.0) +
-  annotate("text", x = c(400, 325, 675, 550), y = c(0.85, 0.70, 0.30, 0.10), label = c("T-375", "1T:1F-375", "TF-M-375", "F-375"), size = 10, hjust = 0.0, col = modelColors[c("TA", "FA", "Weed", "TM")]) + 
+  annotate("text", x = c(365, 240, 675, 550), y = c(0.85, 0.70, 0.30, 0.10), label = c("T-375", "1T:1F-375", "TF-M-375", "F-375"), size = 5, hjust = 0.0, col = modelColors[c("TA", "FA", "Weed", "TM")]) + 
   plot_layout(design = "
   12
   34
@@ -1834,28 +1861,30 @@ plot_annotation(tag_levels = "a")
 dev.off()
 
 
-jpeg("figures/canopy_cover/plotSegCombined.jpg", units = "px", width = 2000, height = 3200, quality = 600)
+tiff("figures/canopy_cover/plotSegCombined.tiff", units = "mm", width = 129, height = 229, res = 400)
 plotSeg2022BarleyFaba + labs(title = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Barley-Faba"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(), legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
   geom_segment(aes(x = 525, y = 0.92, xend = 560, yend = 0.82),
-               arrow = arrow(length = unit(1.0, "cm")),
-               size = 2,
+               arrow = arrow(length = unit(0.1, "cm")),
+               size = 1,
                col = "black") +
   geom_segment(aes(x = 500, y = 0.28, xend = 525, yend = 0.17),
-               arrow = arrow(length = unit(1.0, "cm")),
-               size = 2,
+               arrow = arrow(length = unit(0.1, "cm")),
+               size = 1,
                col = "black") +
   geom_segment(aes(x = 650, y = 0.08, xend = 600, yend = 0.02),
-               arrow = arrow(length = unit(1.0, "cm")),
-               size = 2,
+               arrow = arrow(length = unit(0.1, "cm")),
+               size = 1,
                col = "black") +
-  annotate("text", x = c(450, 450, 650), y = c(0.97, 0.34, 0.10), label = c("Cereal", "Faba", "Weed"), size = 16, hjust = 0.0, col = modelColors[c("Cereal", "Faba", "Weed")]) + 
+  annotate("text", x = c(450, 450, 650), y = c(0.97, 0.34, 0.10), label = c("Cereal", "Faba", "Weed"), size = 4, hjust = 0.0, col = modelColors[c("Cereal", "Faba", "Weed")]) + 
 plotSeg2022RyeFaba + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Rye-Faba"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
@@ -1863,24 +1892,28 @@ plotSeg2022RyeFaba + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Rye-F
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(), legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
-plotSeg2022TriticaleFaba + labs(title = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Triticale-Faba"), y = "", x = bquote(T[cc])) + 
+plotSeg2022TriticaleFaba + labs(title = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"Triticale-Faba"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
 plotSeg2022WheatFaba + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"Wheat-Faba"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(), legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
 plotSeg2023A1T1F + labs(title = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"1T:1F"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(), legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
 plotSeg2023ATFM + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"TF-M"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
@@ -1889,10 +1922,13 @@ plotSeg2023ATFM + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"TF-M"), 
         axis.ticks.y=element_blank(), legend.position = "none",
         plot.subtitle = element_text(hjust = -0.1)) + 
 plotSeg2023A1T3F + labs(title = "", subtitle = bquote({P[cc]}~~~~~~~~~~~"1T:3F"), y = "", x = bquote(T[c])) + 
-  ylim(c(0, 1.0)) + theme(legend.position = "none",
+  ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
+  theme(legend.position = "none",
                           plot.subtitle = element_text(hjust = -0.1)) +
 plotSeg2023A3T1F + labs(title = "", subtitle = bquote(~~~~~~~~~~~~~~~~~~"3T:1F"), y = "", x = bquote(T[c])) + 
   ylim(c(0, 1.0)) + 
+  theme_classic(base_size = 10) + 
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(),
@@ -2173,20 +2209,21 @@ pdf("light_interception/light_interception_NW_tLogisticNormal_graphs_2024_NoWeed
 print(triplePlotsNW)
 dev.off()
 
-jpeg("figures/canopy_cover/plotCanopyCover2024Combined.jpg", units = "px", width = 850, height = 800, quality = 600)
+tiff("figures/canopy_cover/plotCanopyCover2024Combined.tiff", units = "mm", width = 174, height = 193, res = 400)
 triplePlotsNW[[1]] + labs(y = "", subtitle = bquote({P[cc]})) +
+  theme_classic(base_size = 15) +
   theme(legend.position = "none",
         plot.subtitle = element_text(hjust = -0.05)) +
   geom_segment(aes(x = 375, y = 0.9, xend = 420, yend = 0.85),
-               arrow = arrow(length = unit(0.5, "cm")),
+               arrow = arrow(length = unit(0.3, "cm")),
                size = 1) +
-  geom_segment(aes(x = 470, y = 0.70, xend = 440, yend = 0.75),
-               arrow = arrow(length = unit(0.5, "cm")),
+  geom_segment(aes(x = 470, y = 0.70, xend = 445, yend = 0.73),
+               arrow = arrow(length = unit(0.3, "cm")),
                size = 1) +
   geom_segment(aes(x = 500, y = 0.3, xend = 460, yend = 0.34),
-               arrow = arrow(length = unit(0.5, "cm")),
+               arrow = arrow(length = unit(0.3, "cm")),
                size = 1) +
-  annotate("text", x = c(300, 470, 500), y = c(0.95, 0.70, 0.3), label = c("Cereal", "Intercrop", "Legume"), size = 8, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")])
+  annotate("text", x = c(300, 470, 500), y = c(0.90, 0.70, 0.3), label = c("Cereal", "Intercrop", "Legume"), size = 6, hjust = 0.0, col = modelColors[c("Cereal", "Intercrop", "Legume")])
   
 dev.off()
 

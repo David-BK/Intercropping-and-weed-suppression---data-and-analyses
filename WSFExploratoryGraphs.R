@@ -38,7 +38,7 @@ plotMultipleGraphs <- function(DataBarsList, DataLinesList, DataNames, ColourVec
   Plot <- ggplot() +
     DataLinesList +
     DataBarsList +
-    theme_classic(base_size = 25) +
+    theme_classic(base_size = 8) +
     scale_color_manual(labels = Labels,
                        values = Values) +
     ylim(c(0, 1.0)) +
